@@ -2,11 +2,33 @@ services:
   app:
     image: fibbicles/nextcloud:fpm
     restart: always
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud_user
+      - MYSQL_PASSWORD=nextcloud_pass
+      - NEXTCLOUD_ADMIN_USER=admin  # Admin username for Nextcloud setup
+      - NEXTCLOUD_ADMIN_PASSWORD=admin_pass  # Admin password for Nextcloud setup
     expose:
       - '80'
       - '9000'
     volumes:
       - app_data:/var/www/html
+    depends_on:
+      - db  # Ensure Nextcloud starts after MariaDB
+
+  db:
+    image: mariadb:latest
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_pass  # Root password for MariaDB
+      - MYSQL_DATABASE=nextcloud  # Name of the Nextcloud database
+      - MYSQL_USER=nextcloud_user  # MariaDB user for Nextcloud
+      - MYSQL_PASSWORD=nextcloud_pass  # Password for the Nextcloud user
+    volumes:
+      - mysql_data:/var/lib/mysql
+    expose:
+      - '3306'
 
   onlyoffice-document-server:
     image: fibbicles/documentserver:latest
