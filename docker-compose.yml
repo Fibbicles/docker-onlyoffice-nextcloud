@@ -1,17 +1,15 @@
-version: '3'
 services:
   app:
-    container_name: app-server
-    image: nextcloud:fpm
+    image: fibbicles/nextcloud:fpm
     restart: always
     expose:
       - '80'
       - '9000'
     volumes:
       - app_data:/var/www/html
+
   onlyoffice-document-server:
-    container_name: onlyoffice-document-server
-    image: onlyoffice/documentserver:latest
+    image: fibbicles/documentserver:latest
     restart: always
     environment:
       - JWT_SECRET=secret
@@ -21,16 +19,17 @@ services:
     volumes:
       - document_data:/var/www/onlyoffice/Data
       - document_log:/var/log/onlyoffice
+
   nginx:
-    container_name: nginx-server
-    image: nginx
+    image: fibbicles/nginx:latest
     restart: always
-    ports:
-      - 80:80
-      - 443:443
+    expose:
+      - '80'
+      - '443'
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - app_data:/var/www/html
+
 volumes:
   document_data:
   document_log:
